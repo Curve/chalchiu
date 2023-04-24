@@ -56,7 +56,6 @@ There are two types of mods, `hooks` and `scripts`, `hooks` are ran once a speci
 
 Regardless of wether or not your mod is a `hook` or a `script`, the following basic structure is required:
 
-<div align="center">
 <table>
 <tr>
 <td>Basic Structure</td>
@@ -74,7 +73,6 @@ return {
 </td>
 </tr>
 </table>
-</div>
 
 Now, depending on what type of mod you wan't to write, the following fields are required:
 
@@ -96,7 +94,6 @@ Now, depending on what type of mod you wan't to write, the following fields are 
 
 ### Example Mod
 
-<div align="center">
 <table>
 <tr>
 <td>example_mod.mod.lua</td>
@@ -126,7 +123,6 @@ return {
 </td>
 </tr>
 </table>
-</div>
 
 
 ## Caveats
