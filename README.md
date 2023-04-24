@@ -28,6 +28,9 @@ The installation of chalchiu is fairly simple:
   > e.g. `C:/GOG Games/Coromon/`
 
 * Rename the `CoronaLabs.Corona.Native.dll` to `orig.dll`
+  > **Warning**  
+  > This should only be done when you install chalchiu for the **first time**!  
+  > **Ignore this step when updating!**
 
 * Place the `CoronaLabs.Corona.Native.dll` found in the latest [Release](https://github.com/Curve/chalchiu/releases) into the same game directory
 
