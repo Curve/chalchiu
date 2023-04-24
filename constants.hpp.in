@@ -1,0 +1,9 @@
+#pragma once
+#include <string>
+
+#define CHALCHIU_VERSION "${PROJECT_VERSION}"
+
+namespace chalchiu
+{
+    inline const std::string version = CHALCHIU_VERSION;
+} // namespace chalchiu
