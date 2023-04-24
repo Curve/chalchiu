@@ -26,7 +26,7 @@ jobs:
         run: "pacman --noconfirm -Syu base-devel cmake gcc git make mingw-w64 && aur-install mingw-w64-lua51"
 
       - name: Compile
-        run: "mkdir build && cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain.cmake && cmake --build . --config Release"
+        run: "mkdir build && cd build && cmake .. -DIS_CI=1 -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain.cmake && cmake --build . --config Release"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
