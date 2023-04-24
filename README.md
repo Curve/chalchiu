@@ -29,7 +29,7 @@ The installation of chalchiu is fairly simple:
 
 * Rename the `CoronaLabs.Corona.Native.dll` to `orig.dll`
 
-* Place the files found in the [Release](https://github.com/Curve/chalchiu/releases) into the same game directory
+* Place the `CoronaLabs.Corona.Native.dll` found in the latest [Release](https://github.com/Curve/chalchiu/releases) into the same game directory
 
 * Start the Game, the following things should happen:
   * A Log File named `chalchiu.txt` is created
