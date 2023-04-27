@@ -14,16 +14,18 @@ endif()
 # --------------------------------------------------------------------------------------------------------
 
 file(GLOB src "src/*.cpp")
-add_library(${PROJECT_NAME} SHARED ${src} "src/exports.def")
+file(GLOB exports "export/*")
+
+add_library(${PROJECT_NAME} SHARED ${src} ${exports})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "CoronaLabs.Corona.Native")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "iphlpapi")
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS OFF CXX_STANDARD_REQUIRED ON)
 
 if (MINGW)
-    target_link_libraries(${PROJECT_NAME} PRIVATE -static -static-libgcc -static-libstdc++)
+    target_link_libraries(${PROJECT_NAME} PRIVATE "-Wl,--enable-stdcall-fixup" -static -static-libgcc -static-libstdc++)
 endif()
 
 if (NOT MSVC AND NOT IS_CI)
