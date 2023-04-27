@@ -1,5 +1,4 @@
 build
-
 .cache
-
+.vscode
 private/constants.hpp
