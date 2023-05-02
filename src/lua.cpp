@@ -99,7 +99,18 @@ namespace chalchiu
         m_impl->state["print"] = [print, this](const sol::variadic_args &args) {
             using std::views::transform;
 
-            auto to_string = m_impl->state["tostring"];
+            auto to_string = [this](const auto &x) -> std::string {
+                std::string rtn = m_impl->state["tostring"](x);
+
+                if (rtn.find("authentication.prod") != std::string::npos ||
+                    rtn.find("user-blob-storage") != std::string::npos)
+                {
+                    return "<redacted>";
+                }
+
+                return rtn;
+            };
+
             auto str_args = args | transform([&](const auto &x) { return to_string(x); });
 
             std::vector<std::string> to_print{str_args.begin(), str_args.end()};
