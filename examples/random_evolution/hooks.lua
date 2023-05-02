@@ -1,6 +1,5 @@
-hooks.add("classes.interface.settingObjects.CustomDifficultyScreen.RandomizeEvolutionsModeEnumButton",
-  function(module)
-    detour(module, "shouldBeRendered", function()
-      return true
-    end)
+hooks.add("classes.interface.screens.titleScreen",
+  function()
+    globals.debugSettings.disableSomeFeaturesUntilNextUpdate = false
+    globals.debugSettings.disableSomeFeaturesUntilSkinUpdate = false
   end)
