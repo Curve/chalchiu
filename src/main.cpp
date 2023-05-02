@@ -1,3 +1,4 @@
+#include <exception>
 #include <windows.h>
 #include <lime/module.hpp>
 #include <lime/hooks/detour.hpp>
@@ -73,6 +74,25 @@ extern "C" BOOL APIENTRY DllMain(HANDLE, DWORD reason, LPVOID)
 
     logger::get()->info("Found 'CoronaWin32RuntimeRun' at 0x{}", corona_init);
     logger::get()->info("Found 'lua_newstate' at 0x{}", new_state);
+
+    std::set_terminate([] {
+        logger::get()->error("[crash] Unhandled exception!");
+
+        try
+        {
+            std::rethrow_exception(std::current_exception());
+        }
+        catch (const std::exception &e)
+        {
+            logger::get()->error("[crash] [{}] {}", typeid(e).name(), e.what());
+        }
+        catch (...)
+        {
+            logger::get()->error("[crash] Unknown exception '{}'", typeid(std::current_exception()).name());
+        }
+
+        std::abort();
+    });
 
     detour_corona_init = lime::detour::create(corona_init, hk_corona_init);
     detour_new_state = lime::detour::create(new_state, hk_new_state);
