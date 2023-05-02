@@ -19,6 +19,9 @@ local mods = {
 
     timeScale = globals.transition.timeScale
     globals.transition.timeScale = timeScale + 0.5
+
+    timeScale = globals.display.timeScale
+    globals.display.timeScale = timeScale + 0.5
   end
   },
   { "numPad-", "Decrease Game Speed", function()
@@ -29,12 +32,16 @@ local mods = {
 
     timeScale = globals.transition.timeScale
     globals.transition.timeScale = timeScale - 0.5
+
+    timeScale = globals.display.timeScale
+    globals.display.timeScale = timeScale - 0.5
   end
   },
   { "numPad*", "Reset Game Speed", function()
     message("Resetting Game Speed")
 
     globals.timer.timeScale = 1
+    globals.display.timeScale = 1
     globals.transition.timeScale = 1
   end
   },
@@ -54,6 +61,9 @@ local mods = {
   end
   },
   { "numPad3", "Max Out Coromon", function()
+    -- Sometimes noclip can cause issues with interactive dialogues
+    globals.debugSettings.noClipMode = false
+
     local dialog = battleDialogOverlayBuilder:new(false)
     local squad = globals.playerMonsters:getSquad()
 
@@ -74,20 +84,6 @@ local mods = {
   { "numPad4", "Add 5000 Gold", function()
     message("Adding Gold")
     globals.playerCurrency:addGold(5000)
-  end
-  },
-  { "numPad5", "Get Debug Squad", function()
-    message("Applying debug squad")
-
-    local squad = globals.debugSettings:getInitialSquad()
-
-    for _, v in ipairs(squad) do
-      v:tryIncreaseLevel(100)
-      v:setHealthToMaxHealth()
-      v:setEnergyToMaxOverchargedEnergy()
-    end
-
-    globals.playerMonsters:setSquad(squad)
   end
   },
 }
