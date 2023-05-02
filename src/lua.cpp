@@ -26,12 +26,15 @@ namespace chalchiu
 
     lua::lua(lua_State *state)
         : m_impl(std::make_unique<impl>(
-              impl{.mod_dir = fs::absolute(fs::current_path() / "mods"), .state = state, .mods = {}, .hooks = {}}))
+              impl{.mod_dir = fs::current_path() / "mods", .state = state, .mods = {}, .hooks = {}}))
     {
+
         if (!fs::exists(m_impl->mod_dir))
         {
             fs::create_directories(m_impl->mod_dir);
         }
+
+        m_impl->mod_dir = fs::absolute(m_impl->mod_dir);
 
         logger::get()->info("[lua] Starting initialization, mod directory is '{}'", m_impl->mod_dir.string());
 
