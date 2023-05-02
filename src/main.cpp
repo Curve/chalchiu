@@ -10,31 +10,27 @@
 using chalchiu::logger;
 
 lua_State *lua_state;
-std::unique_ptr<lime::detour> detour_new_state;
 std::unique_ptr<lime::detour> detour_corona_init;
+std::unique_ptr<lime::detour> detour_module_loader;
 
-lua_State *hk_new_state(lua_Alloc alloc, void *user_data)
+void hk_module_loader(lua_State *state, void *param_2, int param_3, unsigned int param_4)
 {
-    auto *original = detour_new_state->get_original<decltype(hk_new_state) *>()(alloc, user_data);
-    static bool once = false;
+    logger::get()->debug("[module_loader] 0x{}", reinterpret_cast<std::uintptr_t>(state));
 
-    if (!once)
+    if (!lua_state)
     {
-        logger::get()->info("LuaState is 0x{}", reinterpret_cast<std::uintptr_t>(original));
-        lua_state = original;
-        once = true;
+        lua_state = state;
     }
 
-    return original;
+    return detour_module_loader->get_original<decltype(hk_module_loader) *>()(state, param_2, param_3, param_4);
 }
 
 bool hk_corona_init(int param, HWND *hwnd)
 {
     auto original = detour_corona_init->get_original<decltype(hk_corona_init) *>()(param, hwnd);
 
-    logger::get()->debug("Cleaning up hooks");
     detour_corona_init.reset();
-    detour_new_state.reset();
+    detour_module_loader.reset();
 
     chalchiu::lua::init(lua_state);
     return original;
@@ -51,29 +47,28 @@ extern "C" BOOL APIENTRY DllMain(HANDLE, DWORD reason, LPVOID)
     GetModuleFileNameA(nullptr, file, MAX_PATH);
 
     auto corona = lime::module::get("CoronaLabs.Corona.Native.dll");
-    auto lua = lime::module::get("lua.dll");
 
-    if (!corona || !lua)
+    if (!corona)
     {
-        logger::get()->warn("No CoronaSDK [{}] or Lua [{}] found ({})", corona.has_value(), lua.has_value(), file);
+        logger::get()->warn("No CoronaSDK [{}] found ({})", corona.has_value(), file);
         return TRUE;
     }
 
     logger::get()->info("Loading Chalchiu (v{}) [{}]", chalchiu::version, file);
     logger::get()->info("Found CoronaSDK at 0x{}", corona->get_start(), file);
-    logger::get()->info("Found Lua at 0x{}", lua->get_start(), file);
 
-    static auto corona_init = corona->get_symbol("CoronaWin32RuntimeRun");
-    static auto new_state = lua->get_symbol("lua_newstate");
+    auto module_loader = corona->get_symbol("CoronaLuaRegisterModuleLoader");
+    auto corona_init = corona->get_symbol("CoronaWin32RuntimeRun");
 
-    if (!corona_init || !new_state)
+    if (!module_loader || !corona_init)
     {
-        logger::get()->error("No 'CoronaWin32RuntimeRun' [{}] or 'lua_newstate' [{}] found", corona_init, new_state);
+        logger::get()->error("No 'CoronaWin32RuntimeRun' [{}] or 'CoronaLuaRegisterModuleLoader' [{}] found",
+                             corona_init, module_loader);
+
         return TRUE;
     }
 
-    logger::get()->info("Found 'CoronaWin32RuntimeRun' at 0x{}", corona_init);
-    logger::get()->info("Found 'lua_newstate' at 0x{}", new_state);
+    logger::get()->info("Found 'CoronaLuaRegisterModuleLoader' at 0x{}", module_loader);
 
     std::set_terminate([] {
         logger::get()->error("[crash] Unhandled exception!");
@@ -94,8 +89,8 @@ extern "C" BOOL APIENTRY DllMain(HANDLE, DWORD reason, LPVOID)
         std::abort();
     });
 
+    detour_module_loader = lime::detour::create(module_loader, hk_module_loader);
     detour_corona_init = lime::detour::create(corona_init, hk_corona_init);
-    detour_new_state = lime::detour::create(new_state, hk_new_state);
 
     return TRUE;
 }
