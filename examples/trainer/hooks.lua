@@ -53,6 +53,9 @@ local mods = {
         if answer == "yes" then
           dialog:addText("Maxing out " .. v:getDisplayName())
           v:tryIncreaseLevel(100)
+          v:setPotential(21)
+          v:setHealthToMaxHealth()
+          v:setEnergyToMaxOverchargedEnergy()
         end
       end)
     end
