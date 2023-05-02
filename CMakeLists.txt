@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(chalchiu LANGUAGES CXX VERSION 1.0)
+project(chalchiu LANGUAGES CXX VERSION 2.0)
 
 # --------------------------------------------------------------------------------------------------------
 # Setup Cross-Compilation on Linux
@@ -58,4 +58,4 @@ CPMAddPackage("gh:curve/lime#0a5f62f")
 CPMAddPackage("gh:gabime/spdlog@1.11.0")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC sol2 spdlog::spdlog lime::lime ${LUA_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC sol2 spdlog lime ${LUA_LIBRARIES})
