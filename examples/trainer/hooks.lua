@@ -13,19 +13,29 @@ end
 local mods = {
   { "numPad+", "Increase Game Speed", function()
     message("Increasing Game Speed")
-    local timeScale = globals.debugSettings.timeScale
-    globals.debugSettings:setDebugTimeScale(timeScale + 0.5)
+
+    local timeScale = globals.timer.timeScale
+    globals.timer.timeScale = timeScale + 0.5
+
+    timeScale = globals.transition.timeScale
+    globals.transition.timeScale = timeScale + 0.5
   end
   },
   { "numPad-", "Decrease Game Speed", function()
     message("Decreasing Game Speed")
-    local timeScale = globals.debugSettings.timeScale
-    globals.debugSettings:setDebugTimeScale(timeScale - 0.5)
+
+    local timeScale = globals.timer.timeScale
+    globals.timer.timeScale = timeScale - 0.5
+
+    timeScale = globals.transition.timeScale
+    globals.transition.timeScale = timeScale - 0.5
   end
   },
   { "numPad*", "Reset Game Speed", function()
     message("Resetting Game Speed")
-    globals.debugSettings:setDebugTimeScale(1)
+
+    globals.timer.timeScale = 1
+    globals.transition.timeScale = 1
   end
   },
   { "numPad/", "Toggle Noclip", function()
