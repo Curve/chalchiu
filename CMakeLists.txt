@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(chalchiu LANGUAGES CXX VERSION 2.1)
+project(chalchiu LANGUAGES CXX VERSION 2.2)
 
 # --------------------------------------------------------------------------------------------------------
 # Setup Cross-Compilation on Linux
