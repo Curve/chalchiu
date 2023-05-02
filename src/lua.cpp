@@ -25,9 +25,13 @@ namespace chalchiu
     std::unique_ptr<lua> lua::m_instance;
 
     lua::lua(lua_State *state)
-        : m_impl(std::make_unique<impl>(
-              impl{.mod_dir = fs::current_path() / "mods", .state = state, .mods = {}, .hooks = {}}))
     {
+        logger::get()->info("[lua] Setting up state with 0x{}", reinterpret_cast<std::uintptr_t>(state));
+        m_impl = std::make_unique<impl>(impl{.mod_dir = {}, .state = state, .mods = {}, .hooks = {}});
+
+        logger::get()->info("[lua] Memory used: {}", m_impl->state.memory_used());
+
+        m_impl->mod_dir = fs::current_path() / "mods";
 
         if (!fs::exists(m_impl->mod_dir))
         {
