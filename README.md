@@ -128,7 +128,7 @@ end)
 
 ### Detours
 
-The `detour` function allows you place a detour on any lua function and are often used together with [hooks](#hooks).
+The `detour` function allows you place a detour on any lua function and is often used together with [hooks](#hooks).
 
 Detours can be useful for many things, e.g. modifying the players money when a save game is loaded.
 
