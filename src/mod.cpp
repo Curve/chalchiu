@@ -82,6 +82,8 @@ namespace chalchiu
         };
 
         //? Overwrite "require" so that we can properly load files in the same mod folder
+        static std::map<fs::path, sol::object> loaded;
+
         rtn->m_impl->env["require"] = [=, impl = rtn->m_impl.get()](const std::string &name) mutable {
             const auto mod_folder = fs::absolute(file.parent_path());
             const auto target_path = fmt::format("{}.lua", std::regex_replace(name, std::regex{"\\."}, "/"));
@@ -96,6 +98,12 @@ namespace chalchiu
                 return sol::make_object(state, sol::error(error.what()));
             }
 
+            if (loaded.contains(target))
+            {
+                logger::get()->debug("[mod] [{}] [require] Reusing '{}' ", folder_name, target.string());
+                return loaded.at(target);
+            }
+
             logger::get()->debug("[mod] [{}] [require] Loading '{}'", folder_name, target.string());
             auto result = state.script_file(target.string(), impl->env);
 
@@ -107,7 +115,10 @@ namespace chalchiu
                 return sol::make_object(state, error.what());
             }
 
-            return result.get<sol::object>();
+            auto rtn = result.get<sol::object>();
+            loaded.emplace(target, rtn);
+
+            return rtn;
         };
 
         auto mod = state.script_file(file.string(), rtn->m_impl->env);
