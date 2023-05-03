@@ -1,5 +1,7 @@
 local battleDialogOverlayBuilder = globals.require("classes.interface.dialog.battleDialogOverlayBuilder")
 
+local _M = {}
+
 local function message(...)
   local text = { ... }
 
@@ -10,7 +12,7 @@ local function message(...)
   end
 end
 
-local mods = {
+_M.mods = {
   { "numPad+", "Increase Game Speed", function()
     message("Increasing Game Speed")
 
@@ -92,14 +94,6 @@ hooks.add("classes.interface.screens.titleScreen", function(module)
   detour(module, "new", function(original, ...)
     local ret = original(...)
 
-    local messages = { "Coromon Trainer loaded!" }
-
-    for _, v in ipairs(mods) do
-      table.insert(messages, "[" .. v[1] .. "]: " .. v[2])
-    end
-
-    message(unpack(messages))
-
     globals.eventManager:listen("key", function(event)
       local key = event.keyName
 
@@ -107,7 +101,7 @@ hooks.add("classes.interface.screens.titleScreen", function(module)
         return
       end
 
-      for _, v in ipairs(mods) do
+      for _, v in ipairs(_M.mods) do
         if key == v[1] then
           v[3]()
         end
@@ -119,3 +113,5 @@ hooks.add("classes.interface.screens.titleScreen", function(module)
     return ret
   end)
 end)
+
+return _M
