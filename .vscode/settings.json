@@ -2,5 +2,5 @@
   "cmake.configureArgs": [
     "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/cmake/toolchain.cmake"
   ],
-  "Lua.diagnostics.globals": ["chalchiu", "globals", "hooks"]
+  "Lua.diagnostics.globals": ["chalchiu", "globals", "hooks", "detour"]
 }
