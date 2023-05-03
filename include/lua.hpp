@@ -22,7 +22,7 @@ namespace chalchiu
 
       public:
         void setup_handlers();
-        void setup_hooks();
+        void setup_state();
         void setup_mods();
 
       public:

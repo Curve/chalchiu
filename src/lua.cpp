@@ -27,7 +27,7 @@ namespace chalchiu
     lua::lua(lua_State *state)
     {
         logger::get()->info("[lua] Setting up state with 0x{}", reinterpret_cast<std::uintptr_t>(state));
-        m_impl = std::make_unique<impl>(impl{.mod_dir = {}, .state = state, .mods = {}, .hooks = {}});
+        m_impl = std::make_unique<impl>(impl{.state = state});
 
         logger::get()->info("[lua] Memory used: {}", m_impl->state.memory_used());
 
@@ -43,7 +43,7 @@ namespace chalchiu
         logger::get()->info("[lua] Starting initialization, mod directory is '{}'", m_impl->mod_dir.string());
 
         setup_handlers();
-        setup_hooks();
+        setup_state();
 
         logger::get()->info("[lua] Handlers and Hooks setup!");
 
@@ -76,17 +76,36 @@ namespace chalchiu
         m_impl->state.set_panic(sol::c_call<decltype(panic), panic>);
     }
 
-    void lua::setup_hooks()
+    void lua::setup_state()
     {
-        m_impl->state["hooks"] = m_impl->state.create_table();
-        m_impl->state["hooks"]["add"] = [this](const std::string &module, const sol::function &callback,
-                                               const sol::optional<std::string> &callee) {
+        m_impl->state["chalchiu"] = m_impl->state.create_table();
+
+        //? Setup "hooks" table
+        m_impl->state["chalchiu"]["hooks"] = m_impl->state.create_table();
+        m_impl->state["chalchiu"]["hooks"]["add"] = [this](const std::string &module, const sol::function &callback,
+                                                           const sol::optional<std::string> &callee) {
             logger::get()->info("[hooks] '{}' registered hook for '{}'", callee.value_or("<unknown>"), module);
             m_impl->hooks.emplace(module, callback.as<std::function<void(const sol::object &)>>());
         };
 
+        //? Setup "mods" function
+        m_impl->state.new_usertype<mod>("name", sol::no_constructor,     //
+                                        "name", &mod::name,              //
+                                        "version", &mod::version,        //
+                                        "author", &mod::author,          //
+                                        "description", &mod::description //
+        );
+
+        m_impl->state["chalchiu"]["mods"] = [this]() {
+            using std::views::transform;
+            auto rtn = m_impl->mods | transform([](const auto &x) { return x.get(); });
+
+            return std::vector<mod *>{rtn.begin(), rtn.end()};
+        };
+
+        //? Setup detour function
         m_impl->state.do_string(R"lua(
-            function detour(table, func, detour)
+            chalchiu["detour"] = function(table, func, detour)
                 local original = table[func]
                 
                 table[func] = function(...)
@@ -95,6 +114,7 @@ namespace chalchiu
             end
         )lua");
 
+        //? Hook "print"
         auto print = m_impl->state["print"].get<std::function<void(const sol::variadic_args &)>>();
         m_impl->state["print"] = [print, this](const sol::variadic_args &args) {
             using std::views::transform;
@@ -119,6 +139,7 @@ namespace chalchiu
             return print(args);
         };
 
+        //? Hook "require"
         auto require = m_impl->state["require"].get<std::function<sol::object(const std::string &)>>();
         m_impl->state["require"] = [require, this](const std::string &module) {
             auto rtn = require(module);
