@@ -111,6 +111,10 @@ namespace chalchiu
                 table[func] = function(...)
                     return detour(original, ...)
                 end
+
+                return function() 
+                    table[func] = original 
+                end
             end
         )lua");
 
