@@ -69,14 +69,19 @@ namespace chalchiu
 
         rtn->m_impl->env = sol::environment{state, sol::create, state.globals()};
 
+        //? Expose write access to globals
         rtn->m_impl->env["globals"] = state.globals();
 
-        rtn->m_impl->env["hooks"] = state.create_table();
+        //? Expose "detour" as non namespaced function
+        rtn->m_impl->env["detour"] = rtn->m_impl->env["chalchiu"]["detour"];
 
+        //? Overwrite hooks, so that the mod name is passed as the callee
+        rtn->m_impl->env["hooks"] = state.create_table();
         rtn->m_impl->env["hooks"]["add"] = [=, impl = rtn->m_impl.get()](const sol::variadic_args &args) {
-            return impl->env["globals"]["hooks"]["add"](sol::as_args(args), folder_name);
+            return impl->env["chalchiu"]["hooks"]["add"](sol::as_args(args), folder_name);
         };
 
+        //? Overwrite "require" so that we can properly load files in the same mod folder
         rtn->m_impl->env["require"] = [=, impl = rtn->m_impl.get()](const std::string &name) mutable {
             const auto mod_folder = fs::absolute(file.parent_path());
             const auto target_path = fmt::format("{}.lua", std::regex_replace(name, std::regex{"\\."}, "/"));
