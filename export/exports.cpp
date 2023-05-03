@@ -180,9 +180,9 @@ FARPROC originals[171] = {};
     GetSystemDirectory(dll_path, sizeof(dll_path));
 
     strcat_s(dll_path, "\\IPHLPAPI.dll");
-    auto *const version_dll = LoadLibrary(dll_path);
+    auto *const original = LoadLibrary(dll_path);
 
-#define LOAD_ORIGINAL(index, name) originals[(index)-1] = GetProcAddress(version_dll, name);
+#define LOAD_ORIGINAL(index, name) originals[(index)-1] = GetProcAddress(original, name);
     MAP_EXPORTS(LOAD_ORIGINAL)
 
     return true;
