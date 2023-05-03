@@ -29,7 +29,8 @@ if (MINGW)
 endif()
 
 if (NOT MSVC AND NOT IS_CI)
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror -pedantic -pedantic-errors -Wno-cast-function-type -Wfatal-errors)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror -pedantic -pedantic-errors -Wfatal-errors)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wno-cast-function-type -Wno-missing-field-initializers)
 endif()
 
 # --------------------------------------------------------------------------------------------------------
