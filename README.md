@@ -50,6 +50,35 @@ The installation of chalchiu is fairly simple:
   * A Folder named `mods` is created in the game directory
   * Your Game Window Title includes information about the loaded mods
 
+# Coromon
+
+<details><summary>Continue Reading...</summary>
+<p>
+
+Here you'll find information about the provided Coromon mods!  
+
+All mods are tested with the latest game version <sub><sup>(v1.1.2 at the time of writing)</sup></sub>, don't let that stop you from trying them on other game versions though!
+
+## Available Mods
+
+- Trainer
+  > A simple trainer, which allows you to fun things like noclip, max out all your coromon, and speed up the game!  
+  >
+  > When using the `Mod Info` mod, you can take a look at the available hotkeys in the mod list.
+  ![Trainer Screenshot](assets/trainer_screenshot.png)
+
+- Randomize Evolution
+  > Brings back the "Randomize Evolution" Settings (and more!) in 1.1.2
+  ![Randomize Evolution Screenshot](assets/randomized_evolution_screenshot.png) 
+
+- Mod Info
+  > Shows information about the currently loaded mods, on game startup.  
+  Also adds a button to the pause menu (top right corner), which allows you to bring up the menu again!
+  ![Mod Info Screenshot](assets/mod_info_screenshot.png) 
+
+</p>
+</details>
+
 # For Modders
 
 <details><summary>Continue Reading...</summary>
@@ -57,7 +86,7 @@ The installation of chalchiu is fairly simple:
 
 ## Example Mods
 
-You can find some example mods in the [examples](./examples/) folder.  
+You can find some example mods in the [scripts](./scripts) folder.  
 
 A `debug` mod is also included, which will dump all modules loaded by the game into the log.  
 This is especially useful when you don't want to unpack the precompiled lua scripts the game uses, as just having information on the game modules is often enough to get started.
@@ -104,7 +133,7 @@ Hooks are an essential part of mods, as they allow you to modify modules loaded 
 
 Hooks in chalchiu allow you to intercept lua `require` calls, which allows you to e.g. modify the original table and replace certain game logic with your own.
 
-All you need is the name of a `module` you want to hook. _(To get a list of modules you can use the [debug mod](examples/debug/))_
+All you need is the name of a `module` you want to hook. _(To get a list of modules you can use the [debug mod](scripts/debug/))_
 
 <table>
 <tr>
